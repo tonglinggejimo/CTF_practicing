@@ -96,6 +96,8 @@ select 1,group_concat(username),group_concat(password) from security.users --+
 ![](./images/sqli1_13.png)
 得到users表中的所有数据
 
+![源码中的sql查询语句](./images/sqli1_14.png)
+
 ### 总结
 
 > 1. 判断注入点
@@ -144,13 +146,24 @@ SELECT * FROM users WHERE id='-1'union select 1,group_concat(username),group_con
 ![](./images/sqli2_9.png)
 得到users表中password的所有数据
 
+![源码中的sql查询语句](./images/sqli2_10.png)
+
 ### 总结（与less2方式相同）
 > 1. 判断注入点
 > 2. 判断注入类型
-> 3. 判断闭合方式
-> 4. 判断字段数
-> 5. 获得数据库名称
-> 6. 获得列名
-> 7. 获取数据
+> 3. 判断字段数
+> 4. 获得数据库名称
+> 5. 获得列名
+> 6. 获取数据
 
+## sqli-less3
 
+从这里开始我尝试使用burp进行sql注入，从而使注入语句显示更加直观
+![](./images/sqli3_1.png)
+![](./images/sqli3_2.png)
+![](./images/sqli3_3.png)
+判断发现需要闭合，判断闭合方式
+
+![](./images/sqli3_4.png)
+![](./images/sqli3_5.png)
+发现在单引号闭合后报错，
