@@ -41,7 +41,7 @@ select department,count(id) from student group by department;
 
 一般用于二分法判断数据表列数
 ```sql
-select * from users where id=9 g group by 2;
+select * from users where id=9  group by 2;
 #by2，4，8~~～依次排查到报错为止，从而确定列数；
 ```
 
